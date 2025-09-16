@@ -1,13 +1,39 @@
-    - name: Azure Trusted Signing
-      uses: azure/trusted-signing-action@v0.3.16
-      with:
-        azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-        endpoint: ${{ secrets.AZURE_ENDPOINT }}
-        trusted-signing-account-name: ${{ secrets.AZURE_CODE_SIGNING_NAME }}
-        certificate-profile-name: ${{ secrets.AZURE_CERT_PROFILE_NAME }}
-        
-        # Sign all exes inside the folder
-        files-folder: ${{ env.ARTIFACTS_PATH }}
-        files-folder-filter: exe
+name: Sign Executable with Azure Trusted Signing
+
+# This trigger allows you to run the workflow manually from the Actions tab
+on:
+  workflow_dispatch:
+
+jobs:
+  sign-executables:
+    # Use a Windows runner since you are signing a .exe file
+    runs-on: windows-latest
+
+    steps:
+      # Step 1: Checkout the code from your repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # You would have your build steps here to create the .exe file.
+      # As an example, I'm creating a dummy folder for the signing step to find.
+      # You would replace this with your actual build process.
+      - name: Set up artifact path
+        run: |
+          mkdir -p artifacts
+          # Your build process would put the .exe in this 'artifacts' folder.
+          echo "ARTIFACTS_PATH=artifacts" >> $env:GITHUB_ENV
+
+      # Step 2: Your signing step, now correctly indented under 'steps'
+      - name: Azure Trusted Signing
+        uses: azure/trusted-signing-action@v0.3.16
+        with:
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          endpoint: ${{ secrets.AZURE_ENDPOINT }}
+          trusted-signing-account-name: ${{ secrets.AZURE_CODE_SIGNING_NAME }}
+          certificate-profile-name: ${{ secrets.AZURE_CERT_PROFILE_NAME }}
+          
+          # Sign all exes inside the folder
+          files-folder: ${{ env.ARTIFACTS_PATH }}
+          files-folder-filter: exe
