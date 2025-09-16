@@ -1,0 +1,33 @@
+﻿name: Debug Secrets
+
+on:
+  workflow_dispatch: # Allows you to run this manually
+
+jobs:
+  check-secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify Secrets
+        env:
+          # Map the secrets to environment variables
+          ID_CLIENT: ${{ secrets.AZURE_CLIENT_ID }}
+          ID_TENANT: ${{ secrets.AZURE_TENANT_ID }}
+          SECRET_CLIENT: ${{ secrets.AZURE_CLIENT_SECRET }}
+        run: |
+          echo "Verifying the secrets passed to the runner..."
+          echo "NOTE: The actual values below will be masked as *** by GitHub."
+          echo "============================================================"
+          echo "AZURE_CLIENT_ID: $ID_CLIENT"
+          echo "AZURE_TENANT_ID: $ID_TENANT"
+          echo "AZURE_CLIENT_SECRET: $SECRET_CLIENT"
+          echo "============================================================"
+          echo
+          echo "Checking for copy-paste errors by verifying lengths:"
+          echo "Length of Client ID: ${#ID_CLIENT}"
+          echo "Length of Tenant ID: ${#ID_TENANT}"
+          echo "Length of Client Secret: ${#SECRET_CLIENT}"
+          echo "------------------------------------------------------------"
+          echo "Checking first character:"
+          echo "First char of Client ID: ${ID_CLIENT:0:1}"
+          echo "First char of Tenant ID: ${ID_TENANT:0:1}"
+          echo "First char of Client Secret: ${SECRET_CLIENT:0:1}"
