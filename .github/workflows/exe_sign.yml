@@ -3,30 +3,30 @@ on:
     branches: [main]
 
 jobs:
-  build-and-sign:
+  sign-the-exe:
     runs-on: windows-latest
-    name: Build app and sign files with Trusted Signing
+    name: Sign the executable file
+
     steps:
-      - name: Checkout
+      - name: Checkout the repository
         uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: dotnet restore App
+      # The .NET restore and build steps have been removed.
 
-      - name: Build
-        run: dotnet build --configuration Release --no-restore WpfApp
-
-      - name: Sign files with Trusted Signing
-        uses: azure/trusted-signing-action@v0
+      - name: Sign the file with Trusted Signing
+        uses: azure/trusted-signing-action@v1
         with:
           azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
           azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           endpoint: https://eus.codesigning.azure.net/
-          trusted-signing-account-name: vscx-codesigning
+          code-signing-account-name: vscx-codesigning
           certificate-profile-name: vscx-certificate-profile
-          files-folder: ${{ github.workspace }}\App\App\bin\Release\net8.0-windows
-          files-folder-filter: exe,dll
-          file-digest: SHA256
+          
+          # 1. Point to the root folder of the repository
+          files-folder: ${{ github.workspace }}
+          
+          # 2. Filter for only the .exe file
+          files-folder-filter: exe
+          
           timestamp-rfc3161: http://timestamp.acs.microsoft.com
-          timestamp-digest: SHA256
