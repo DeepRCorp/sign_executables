@@ -26,7 +26,7 @@ jobs:
           # 1. Point to the root folder of the repository
           files-folder: ${{ github.workspace }}
           
-          # 2. Filter for only the .exe file 
+          # 2. Filter for only the .exe file  
           files-folder-filter: exe
           
           timestamp-rfc3161: http://timestamp.acs.microsoft.com
